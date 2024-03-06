@@ -20,6 +20,7 @@
 
 <div class="rounded-xl border bg-card text-card-foreground shadow p-6">
   <!-- title -->
+  <slot name="header">
   <div class="flex flex-col space-y-1.5 font-semibold">
     {#if showClock}
       <div class="inline-flex items-center justify-between">
@@ -29,6 +30,7 @@
     {/if}
     <div class="capitalize">{data.location}</div>
   </div>
+</slot>
 
   {#if data?.temperature}
     <div class="flex flex-col items-center justify-center py-7 md:py-10">

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { AirVentIcon } from "lucide-svelte";
-  export let data: { ppm: number | undefined };
+  export let data: { aqi: number | undefined };
 
   let progress: HTMLDivElement;
 
-  $: if (progress && data?.ppm) {
-    const leftPos = (data.ppm - 1) * 15 + 5;
+  $: if (progress && data?.aqi) {
+    const leftPos = (data.aqi - 1) * 15 + 5;
     progress.style.left = leftPos + "%";
   }
 </script>
@@ -19,27 +19,27 @@
   <div class="mt-4">
     <div
       class="progress relative h-2.5 w-full overflow-hidden rounded-full bg-secondary"
-      class:animate-pulse={!data?.ppm}>
-      {#if data.ppm}
+      class:animate-pulse={!data?.aqi}>
+      {#if data.aqi}
         <div
           bind:this={progress}
-          title="{data.ppm} ppm"
+          title="{data.aqi} ppm"
           class="z-10 absolute h-2.5 w-2.5 flex-1 rounded-full bg-primary shadow-lg shadow-foreground ring-2 ring-background transition-all cursor-pointer hover:ring-primary hover:ring-offset-1 hover:ring-offset-background" />
       {/if}
     </div>
   </div>
 
   <div class="mt-4">
-    {#if data.ppm}
-      {data.ppm == 1
+    {#if data.aqi}
+      {data.aqi == 1
         ? "Air quality is good."
-        : data.ppm == 2
+        : data.aqi == 2
           ? "Air quality is moderate."
-          : data.ppm == 3
+          : data.aqi == 3
             ? "Air quality is unhealthy for sensitive groups."
-            : data.ppm == 4
+            : data.aqi == 4
               ? "Air quality is unhealthy."
-              : data.ppm == 5
+              : data.aqi == 5
                 ? "Air quality is very unhealthy."
                 : "Air quality is hazardous."}
     {:else}

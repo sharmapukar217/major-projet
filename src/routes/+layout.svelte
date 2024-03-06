@@ -30,29 +30,35 @@
     });
 
     ws.addEventListener("message", function (ev) {
-      const json = JSON.parse(ev.data ?? "{}");
-      if (!json?.event) return;
+      try {
+        const json = JSON.parse(ev.data ?? "{}");
+        if (!json?.event) return;
 
-      const { event, data = {} } = json;
-      console.debug(json);
+        console.log(json);
 
-      switch (event) {
-        case "DHT11": {
-          deviceStatus.set("connected");
-          queryClient.setQueryData(["dht11-reading"], () => ({
-            humidity: Number(data.humidity),
-            temperature: Number(data.temperature).toFixed(2)
-          }));
-        }
-        case "PONG": {
-          deviceStatus.set("connected");
-          toast.dismiss("ping");
+        const { event, data = {} } = json;
+        console.debug(json);
 
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-            timeoutId = undefined;
+        switch (event) {
+          case "DHT11": {
+            deviceStatus.set("connected");
+            queryClient.setQueryData(["dht11-reading"], () => ({
+              humidity: Number(data.humidity),
+              temperature: Number(data.temperature).toFixed(2)
+            }));
+          }
+          case "PONG": {
+            deviceStatus.set("connected");
+            toast.dismiss("ping");
+
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = undefined;
+            }
           }
         }
+      } catch {
+        // don't handle error
       }
     });
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Temperature from "$lib/components/Temperature.svelte";
   import TemperatureList from "$lib/components/TemperatureList.svelte";
   import WindMeter from "$lib/components/WindMeter.svelte";
@@ -7,12 +7,32 @@
   import Humidity from "$lib/components/Humidity.svelte";
   import Visibility from "$lib/components/Visibility.svelte";
 
+  import type { ForecastData } from "$lib/types";
   import AirPollutionLine from "$lib/components/AirPollutionLine.svelte";
   import AirComponentsPieChart from "$lib/components/AirComponentsPieChart.svelte";
-  import { createDHT11ReadingQUery, createWeatherApi } from "$lib/utilities/queries";
+  import {
+    createAirQualityApiQuery,
+    createDHT11ReadingQUery,
+    createWeatherApi
+  } from "$lib/utilities/queries";
 
   const weatherQuery = createWeatherApi();
   const dht11Query = createDHT11ReadingQUery();
+  const airQualityQuery = createAirQualityApiQuery();
+
+  // $: temperatureLists =
+
+  // let temperatureLists: Array<ForecastData> = [];
+  const temperatureLists = new Map<ForecastData["hour"], ForecastData>();
+
+  $: {
+    if ($dht11Query.data?.temperature) {
+      // temperatureLists.push({ })
+      const hour = new Date().getHours();
+      const temperature = $dht11Query.data?.temperature;
+      temperatureLists.set(hour, { hour, temperature });
+    }
+  }
 </script>
 
 <div class="grid w-full grid-cols-1 lg:grid-cols-3 gap-4">
@@ -23,15 +43,17 @@
         location: "Kathmandu",
         temperature: $dht11Query.data?.temperature,
         refTemperature: $weatherQuery.data?.temp
+        // maxTemperature: $weatherQuery.data?.
       }} />
-    <TemperatureList data={[]} />
+    <TemperatureList data={Array.from(temperatureLists.values())} />
   </div>
 
   <!-- middle col -->
   <div>
     <div class="flex flex-col gap-4">
-      <AirComponentsPieChart data={{ components: undefined }} />
-      <AirPollutionLine data={{ ppm: 2 }} />
+      <AirComponentsPieChart
+        data={{ aqi: $airQualityQuery.data?.aqi, components: $airQualityQuery.data?.components }} />
+      <AirPollutionLine data={{ aqi: $airQualityQuery.data?.aqi }} />
     </div>
   </div>
 

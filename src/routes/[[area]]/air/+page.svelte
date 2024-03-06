@@ -1,7 +1,6 @@
 <script>
   import { deviceStatus } from "$lib/stores";
   import Temperature from "$lib/components/Temperature.svelte";
-  import TemperatureList from "$lib/components/TemperatureList.svelte";
   import WindMeter from "$lib/components/WindMeter.svelte";
   import Humidity from "$lib/components/Humidity.svelte";
   import Visibility from "$lib/components/Visibility.svelte";
@@ -17,8 +16,6 @@
   const weatherQuery = createWeatherApi();
   const dht11Query = createDHT11ReadingQUery();
   const airQualityQuery = createAirQualityApiQuery();
-
-  $: console.log($airQualityQuery.data);
 </script>
 
 {#if $deviceStatus === "disconected"}
@@ -33,14 +30,14 @@
         temperature: $dht11Query.data?.temperature,
         refTemperature: $weatherQuery.data?.temp
       }} />
-    <TemperatureList data={[]} />
   </div>
 
   <!-- middle col -->
   <div>
     <div class="flex flex-col gap-4">
-      <AirComponentsPieChart data={{ components: $airQualityQuery.data?.components }} />
-      <AirPollutionLine data={{ ppm: 2 }} />
+      <AirComponentsPieChart
+        data={{ aqi: $airQualityQuery.data?.aqi, components: $airQualityQuery.data?.components }} />
+      <AirPollutionLine data={{ aqi: $airQualityQuery.data?.aqi }} />
     </div>
   </div>
 

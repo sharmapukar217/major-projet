@@ -6,7 +6,7 @@
   import type { AirComponent } from "$lib/types";
   import { onMount } from "svelte";
 
-  export let data: { components: AirComponent | undefined };
+  export let data: { aqi?: number; components: AirComponent | undefined };
 
   $: dataset = Object.keys(data.components ?? {}).map((key) => ({
     id: key,
@@ -24,6 +24,16 @@
 
   const value = (d: { id: string; value: string }) => d.value;
   onMount(() => (mounted = true));
+
+  const getFreshnessStatus = (aqi?: number) => {
+    if (!aqi) return;
+    if (aqi < 12) return "Clean";
+    else if (aqi >= 12 && aqi < 35.5) return "Good";
+    else if (aqi >= 35.5 && aqi < 55.5) return "Fair";
+    else if (aqi >= 55.5 && aqi < 150.5) return "Poor";
+    else if (aqi >= 150.5 && aqi < 250.5) return "Very Poor";
+    else return "Unclean";
+  };
 </script>
 
 <div class="flex flex-col rounded-xl border bg-card text-card-foreground shadow p-6 overflow-clip">
@@ -39,12 +49,17 @@
         data={dataset}
         margin={{ top: 10, right: 0, left: 0, bottom: 10 }}>
         <VisTooltip {value} {triggers} />
-        <VisDonut {value} arcWidth={40} centralLabel="100 ppm" centralSubLabel="FRESH" />
+        <VisDonut
+          {value}
+          arcWidth={40}
+          centralLabel={data?.aqi ? `${data?.aqi} μg/m³` : undefined}
+          centralSubLabel={getFreshnessStatus(data?.aqi)} />
       </VisSingleContainer>
     </div>
   {:else}
     <div class="flex items-center justify-center py-2">
-      <div class="w-72 h-72 rounded-full bg-transparent border-[32px] animate-pulse flex-shrink-0" />
+      <div
+        class="w-72 h-72 rounded-full bg-transparent border-[32px] animate-pulse flex-shrink-0" />
     </div>
   {/if}
 </div>

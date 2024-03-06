@@ -27,6 +27,6 @@ export type Weather = {
 };
 
 export type ForecastData = {
-  hour: string;
+  hour: number;
   temperature: number;
 };

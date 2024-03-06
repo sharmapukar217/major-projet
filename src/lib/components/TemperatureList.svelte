@@ -1,6 +1,13 @@
 <script lang="ts">
   import type { ForecastData } from "$lib/types";
-  import { CalendarIcon, SunIcon } from "lucide-svelte";
+  import {
+    CalendarIcon,
+    FlameIcon,
+    SnowflakeIcon,
+    SunIcon,
+    SunMediumIcon,
+    SunSnowIcon
+  } from "lucide-svelte";
   import emblaCarouselSvelte from "embla-carousel-svelte";
 
   export let data: Array<ForecastData> | undefined;
@@ -14,16 +21,34 @@
   <div class="overflow-hidden" use:emblaCarouselSvelte>
     {#if data}
       {#if data.length}
-        <div class="flex" data-embla-container="">
+        <div class="flex space-x-5" data-embla-container="">
           {#each data as d}
             <div
               role="group"
               aria-roledescription="slide"
-              class="flex flex-col items-center min-w-14 space-y-5 flex-shrink-0"
+              class="flex flex-col items-center min-w-14 space-y-5 flex-shrink-0 group last:text-primary"
               data-embla-slide>
-              <h1 class="font-medium md:font-semibold text-muted-foreground">{d.hour}</h1>
-              <SunIcon />
-              <h1 class="font-medium text-foreground">{d.temperature} &deg;C</h1>
+              <h1
+                class="font-medium md:font-semibold text-muted-foreground group-last:text-primary">
+                {d.hour}
+                {+d.hour > 11 ? "pm" : "am"}
+              </h1>
+
+              {#if d.temperature <= 0}
+                <SnowflakeIcon />
+              {:else if d.temperature <= 10}
+                <SunSnowIcon />
+              {:else if d.temperature <= 20}
+                <SunMediumIcon />
+              {:else if d.temperature <= 40}
+                <SunIcon />
+              {:else}
+                <FlameIcon />
+              {/if}
+
+              <h1 class="text-sm font-medium text-foreground group-last:text-primary">
+                {d.temperature} &deg;C
+              </h1>
             </div>
           {/each}
         </div>

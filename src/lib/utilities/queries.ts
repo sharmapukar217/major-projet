@@ -48,7 +48,7 @@ export const createWeatherApi = () => {
 /** get air pollution data from api */
 export const createAirQualityApiQuery = () => {
   return createQuery<{ aqi: number; components: AirComponent }>({
-    queryKey: ["air-pollution(api)"],
+    queryKey: ["air-pollution (api)"],
     refetchInterval: 5 * 60 * 1000,
     queryFn: async ({ signal }) => {
       const latitdue = 27.6955136;
