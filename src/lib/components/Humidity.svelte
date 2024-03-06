@@ -1,7 +1,7 @@
 <script lang="ts">
   import { DropletsIcon } from "lucide-svelte";
 
-  export let data: { humidity: number | undefined };
+  export let data: { humidity: number | undefined; refHumidity?: number };
 </script>
 
 <div class="flex flex-col rounded-xl border bg-card text-card-foreground shadow p-6 overflow-clip">
@@ -11,8 +11,13 @@
   </div>
 
   {#if data?.humidity}
-    <div class="mt-4">
-      <h1 class="font-semibold text-lg md:text-xl">{data.humidity} &deg;</h1>
+    <div class="mt-4 inline-flex items-center space-x-2">
+      <h1 class="font-semibold text-lg md:text-xl">{data.humidity} %</h1>
+
+      {#if data.refHumidity}
+        {@const threshold = Math.abs(data.refHumidity - data.humidity).toFixed(2)}
+        <small class="text-sm font-medium text-muted-foreground">± {threshold}</small>
+      {/if}
     </div>
 
     <div class="mt-6">

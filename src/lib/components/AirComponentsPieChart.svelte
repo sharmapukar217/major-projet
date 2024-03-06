@@ -6,12 +6,12 @@
   import type { AirComponent } from "$lib/types";
   import { onMount } from "svelte";
 
-  export let data: { composition: AirComponent | undefined };
+  export let data: { components: AirComponent | undefined };
 
-  $: dataset = Object.keys(data.composition ?? {}).map((key) => ({
+  $: dataset = Object.keys(data.components ?? {}).map((key) => ({
     id: key,
     // @ts-expect-error
-    value: data.composition[key]
+    value: data.components[key]
   }));
 
   const triggers = {
@@ -29,11 +29,11 @@
 <div class="flex flex-col rounded-xl border bg-card text-card-foreground shadow p-6 overflow-clip">
   <div class="inline-flex items-center space-x-3 pb-4">
     <ComponentIcon class="w-4 h-4" />
-    <div class="font-semibold">Air Composition</div>
+    <div class="font-semibold">Air components</div>
   </div>
 
-  {#if data?.composition && mounted}
-    <div id="air-composition-chart">
+  {#if data?.components && mounted}
+    <div id="air-components-chart">
       <VisSingleContainer
         width="100%"
         data={dataset}
@@ -50,7 +50,7 @@
 </div>
 
 <style lang="postcss">
-  :global(#air-composition-chart) {
+  :global(#air-components-chart) {
     --vis-donut-central-label-font-size: 16px;
     --vis-donut-central-label-text-color: theme("colors.foreground");
 

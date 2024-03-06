@@ -6,7 +6,6 @@
   import { deviceStatus } from "$lib/stores";
   import HeaderIcon from "./HeaderIcon.svelte";
   import { cn } from "$lib/utilities/functions";
-  import { mqttClient } from "$lib/mqttClient";
   import { toast } from "svelte-sonner";
 
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -15,7 +14,7 @@
     clearTimeout(timeoutId);
     deviceStatus.set("unknown");
 
-    mqttClient.publish("@major-project/browser", "PING");
+    window.ws.send("PING");
     toast.loading("Sending `PING` event", { id: "ping" });
 
     // wait for 5s, then change status to disconneced

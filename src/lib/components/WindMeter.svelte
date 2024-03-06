@@ -2,7 +2,7 @@
   import type { Weather } from "$lib/types";
   import { WindIcon } from "lucide-svelte";
 
-  export let data: Weather["wind"];
+  export let data: Partial<Weather["wind"]>;
 </script>
 
 <div class="rounded-xl border bg-card text-card-foreground shadow p-6">

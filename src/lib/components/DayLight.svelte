@@ -1,8 +1,15 @@
 <script lang="ts">
   import { SunriseIcon } from "lucide-svelte";
 
-  export let data: { sunrise: number; sunset: number };
+  export let data: { sunrise?: number; sunset?: number };
   export let timeZone: string | undefined = undefined;
+
+  const convertUTCtoLocal = (unixTimestampUTC: number) => {
+    return new Date(unixTimestampUTC * 1000).toLocaleTimeString("en-US", {
+      timeZone,
+      hour12: true
+    });
+  };
 </script>
 
 <div class="flex flex-col rounded-xl border bg-card text-card-foreground shadow p-6 overflow-clip">
@@ -14,13 +21,13 @@
   {#if data?.sunrise && data?.sunset}
     <div class="mt-4">
       <h1 class="font-semibold text-lg md:text-xl">
-        {new Date(data.sunset).toLocaleTimeString("en-US", { timeZone, hour12: true })}
+        {convertUTCtoLocal(data.sunrise)}
       </h1>
     </div>
 
     <div class="mt-auto">
       <small class="font-medium text-sm text-muted-foreground">
-        Sunrise at {new Date(data.sunrise).toLocaleTimeString("en-US", { timeZone, hour12: true })}
+        {convertUTCtoLocal(data.sunset)}
       </small>
     </div>
   {:else}
