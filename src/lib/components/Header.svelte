@@ -8,35 +8,19 @@
   import { cn } from "$lib/utilities/functions";
   import { toast } from "svelte-sonner";
 
-  let showToast = false;
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  let isPinging = false;
 
   const handleClick = () => {
-    showToast = true;
-    clearTimeout(timeoutId);
+    isPinging = true;
     deviceStatus.set("unknown");
 
     window.ws.send("PING");
     toast.loading("Sending `PING` event", { id: "ping" });
-
-    // wait for 5s, then change status to disconneced
-    timeoutId = setTimeout(() => {
-      if ($deviceStatus === "unknown") {
-        deviceStatus.set("disconected");
-        toast.error("Device disconneted!", { id: "ping" });
-      }
-      clearTimeout(timeoutId);
-      timeoutId = undefined;
-    }, 5000);
   };
 
-  $: if ($deviceStatus !== "unknown" && timeoutId) {
-    clearTimeout(timeoutId);
-    timeoutId = undefined;
-    if (showToast) {
-      toast.success("Returned `PONG`, device is online!", { id: "ping" });
-      showToast = false;
-    }
+  $: if ($deviceStatus === "connected" && isPinging) {
+    toast.success("Received `PONG`, device is online!", { id: "ping" });
+    isPinging = false;
   }
 </script>
 
@@ -49,7 +33,7 @@
         size="icon"
         title={$deviceStatus}
         on:click={handleClick}
-        disabled={!!timeoutId}>
+        disabled={isPinging}>
         <div
           class={cn(
             "w-2 h-2 rounded-full",

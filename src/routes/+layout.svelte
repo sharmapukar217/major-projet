@@ -15,7 +15,20 @@
   const queryClient = data.queryClient;
 
   let ws: WebSocket;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  $: if ($deviceStatus === "unknown") {
+    timeoutId = setTimeout(() => {
+      if ($deviceStatus === "unknown") {
+        deviceStatus.set("disconected");
+        toast.error("Device disconneted!", { id: "ping" });
+      }
+    }, 7000);
+  }
+
   onMount(() => {
+    deviceStatus.set("unknown");
+
     if (!ws) {
       ws = new WebSocket(
         "wss://free.blr2.piesocket.com/v3/1?api_key=orFnMkDESWthOXRcl0J4yJo05uMHtkWbUOMxYDPK"
@@ -56,7 +69,7 @@
           case "pH": {
             return queryClient.setQueryData(["pH-reading"], () => {
               const ph = data?.pH;
-              return (ph> 0 && ph<= 14) ? Math.min(Math.max(parseInt(ph), 6.32), 9.86) : NaN;
+              return ph > 0 && ph <= 14 ? Math.min(Math.max(parseInt(ph), 6.32), 9.86) : NaN;
             });
           }
           case "PONG": {
@@ -77,6 +90,7 @@
 
     return () => {
       clearInterval(intervalId);
+      clearTimeout(timeoutId);
       ws.close();
     };
   });
