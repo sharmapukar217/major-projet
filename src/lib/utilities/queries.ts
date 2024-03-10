@@ -8,6 +8,27 @@ export const createDHT11ReadingQUery = () => {
   });
 };
 
+export const createDB18B20ReadingQuery = () => {
+  return createQuery({
+    queryKey: ["ds18b20-reading"],
+    initialData: { temperature: NaN }
+  });
+};
+
+export const createpHReadingQuery = () => {
+  return createQuery({
+    queryKey: ["pH-reading"],
+    initialData: NaN
+  });
+};
+
+export const createMQ135ReadingQuery = () => {
+  return createQuery<AirComponent>({
+    queryKey: ["mq135-reading"],
+    initialData: { co2: NaN, co: NaN, alcohol: NaN, toulene: NaN, nh4: NaN }
+  });
+};
+
 /** get data from api */
 export const createWeatherApi = () => {
   return createQuery<Weather>({
@@ -70,14 +91,11 @@ export const createAirQualityApiQuery = () => {
       return {
         aqi: Number(data.main?.aqi),
         components: {
-          NO: Number(data.components?.no),
-          CO: Number(data.components?.co),
-          O3: Number(data.components?.o3),
-          NO2: Number(data.components?.no2),
-          SO2: Number(data.components?.so2),
-          NH3: Number(data.components?.nh3),
-          PM10: Number(data.components?.pm10),
-          PM2_5: Number(data.components?.pm2_5)
+          co: Number(data.components?.co),
+          co2: Number(data.components?.co2),
+          alcohol: Number(data.components?.alcohol),
+          toulene: Number(data.components?.so2),
+          nh4: Number(data.components?.nh3)
         }
       };
     }

@@ -67,7 +67,10 @@
   </div>
 
   {#if data?.ph}
-    <div class="mt-4 text-sm font-medium text-muted-foreground">{getComment(data.ph)}</div>
+    <div class="mt-4">
+      <h1 class="font-medium">pH: {data.ph}</h1>
+    </div>
+    <div class="mt-2 text-sm font-medium text-muted-foreground">{getComment(data.ph)}</div>
   {/if}
 </div>
 

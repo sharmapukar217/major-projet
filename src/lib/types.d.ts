@@ -1,10 +1,9 @@
 export type AirComponent = {
-  CO: number;
-  NO: number;
-  NO2: number;
-  O3: number;
-  SO2: number;
-  NH3: number;
+  co: number;
+  alcohol: number;
+  co2: number;
+  toulene: number;
+  nh4: number;
 };
 
 // PM2_5: number;

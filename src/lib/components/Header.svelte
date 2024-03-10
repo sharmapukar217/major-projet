@@ -8,9 +8,11 @@
   import { cn } from "$lib/utilities/functions";
   import { toast } from "svelte-sonner";
 
+  let showToast = false;
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   const handleClick = () => {
+    showToast = true;
     clearTimeout(timeoutId);
     deviceStatus.set("unknown");
 
@@ -31,6 +33,10 @@
   $: if ($deviceStatus !== "unknown" && timeoutId) {
     clearTimeout(timeoutId);
     timeoutId = undefined;
+    if (showToast) {
+      toast.success("Returned `PONG`, device is online!", { id: "ping" });
+      showToast = false;
+    }
   }
 </script>
 

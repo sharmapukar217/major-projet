@@ -23,7 +23,7 @@
       {#if data.aqi}
         <div
           bind:this={progress}
-          title="{data.aqi} ppm"
+          title="{data.aqi} μg/m³"
           class="z-10 absolute h-2.5 w-2.5 flex-1 rounded-full bg-primary shadow-lg shadow-foreground ring-2 ring-background transition-all cursor-pointer hover:ring-primary hover:ring-offset-1 hover:ring-offset-background" />
       {/if}
     </div>

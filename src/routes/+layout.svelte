@@ -11,13 +11,11 @@
   import Sonner from "$lib/components/Sonner.svelte";
 
   export let data;
+  let lastUpdated = Date.now();
   const queryClient = data.queryClient;
 
   let ws: WebSocket;
   onMount(() => {
-    const PING_INTERVAL_MS = 30 * 1000;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
     if (!ws) {
       ws = new WebSocket(
         "wss://free.blr2.piesocket.com/v3/1?api_key=orFnMkDESWthOXRcl0J4yJo05uMHtkWbUOMxYDPK"
@@ -34,27 +32,35 @@
         const json = JSON.parse(ev.data ?? "{}");
         if (!json?.event) return;
 
-        console.log(json);
-
         const { event, data = {} } = json;
         console.debug(json);
 
+        lastUpdated = Date.now();
+        deviceStatus.set("connected");
+
         switch (event) {
           case "DHT11": {
-            deviceStatus.set("connected");
-            queryClient.setQueryData(["dht11-reading"], () => ({
+            return queryClient.setQueryData(["dht11-reading"], () => ({
               humidity: Number(data.humidity),
               temperature: Number(data.temperature).toFixed(2)
             }));
           }
+          case "DS18B20": {
+            return queryClient.setQueryData(["ds18b20-reading"], () => ({
+              temperature: Number(data.temperature).toFixed(2)
+            }));
+          }
+          case "MQ135": {
+            return queryClient.setQueryData(["mq135-reading"], () => data);
+          }
+          case "pH": {
+            return queryClient.setQueryData(["pH-reading"], () => {
+              const ph = data?.pH;
+              return (ph> 0 && ph<= 14) ? Math.min(Math.max(parseInt(ph), 6.32), 9.86) : NaN;
+            });
+          }
           case "PONG": {
-            deviceStatus.set("connected");
-            toast.dismiss("ping");
-
-            if (timeoutId) {
-              clearTimeout(timeoutId);
-              timeoutId = undefined;
-            }
+            return toast.dismiss("ping");
           }
         }
       } catch {
@@ -62,14 +68,16 @@
       }
     });
 
-    // send ping every 30s
-    const intervalId = setInterval(() => {
-      ws.send("PING");
-    }, PING_INTERVAL_MS);
+    const intervalId = setInterval(function () {
+      if (Date.now() - lastUpdated > 30) {
+        deviceStatus.set("disconected");
+        ws.send("PING");
+      }
+    }, 30_000);
 
     return () => {
+      clearInterval(intervalId);
       ws.close();
-      // clearInterval(intervalId);
     };
   });
 </script>

@@ -29,9 +29,11 @@
               class="flex flex-col items-center min-w-14 space-y-5 flex-shrink-0 group last:text-primary"
               data-embla-slide>
               <h1
-                class="font-medium md:font-semibold text-muted-foreground group-last:text-primary">
-                {d.hour}
-                {+d.hour > 11 ? "pm" : "am"}
+                class="text-sm font-medium md:font-semibold text-muted-foreground group-last:text-primary">
+                {#if d.hour > 11}
+                  {d.hour - 12} pm
+                {:else}
+                  {d.hour} am{/if}
               </h1>
 
               {#if d.temperature <= 0}
@@ -46,7 +48,7 @@
                 <FlameIcon />
               {/if}
 
-              <h1 class="text-sm font-medium text-foreground group-last:text-primary">
+              <h1 class="text-xs md:text-sm font-medium text-foreground group-last:text-primary">
                 {d.temperature} &deg;C
               </h1>
             </div>

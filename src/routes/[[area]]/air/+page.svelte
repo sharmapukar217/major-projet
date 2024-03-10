@@ -8,14 +8,20 @@
   import AirPollutionLine from "$lib/components/AirPollutionLine.svelte";
   import AirComponentsPieChart from "$lib/components/AirComponentsPieChart.svelte";
   import {
+    createDB18B20ReadingQuery,
     createAirQualityApiQuery,
     createDHT11ReadingQUery,
-    createWeatherApi
+    createWeatherApi,
+
+    createMQ135ReadingQuery
+
   } from "$lib/utilities/queries";
 
   const weatherQuery = createWeatherApi();
   const dht11Query = createDHT11ReadingQUery();
+  const db18b20Query = createDB18B20ReadingQuery();
   const airQualityQuery = createAirQualityApiQuery();
+  const mq135ReadingQuery = createMQ135ReadingQuery();
 </script>
 
 {#if $deviceStatus === "disconected"}
@@ -27,7 +33,7 @@
     <Temperature
       data={{
         location: "Kathmandu",
-        temperature: $dht11Query.data?.temperature,
+        temperature: $db18b20Query.data?.temperature,
         refTemperature: $weatherQuery.data?.temp
       }} />
   </div>
@@ -36,7 +42,7 @@
   <div>
     <div class="flex flex-col gap-4">
       <AirComponentsPieChart
-        data={{ aqi: $airQualityQuery.data?.aqi, components: $airQualityQuery.data?.components }} />
+        data={{ aqi: $airQualityQuery.data?.aqi, components: $mq135ReadingQuery.data }} />
       <AirPollutionLine data={{ aqi: $airQualityQuery.data?.aqi }} />
     </div>
   </div>
@@ -52,7 +58,7 @@
       <div>
         <Humidity
           data={{
-            humidity: $dht11Query.data?.humidity,
+            humidity: $weatherQuery.data?.humidity,
             refHumidity: $weatherQuery.data?.humidity
           }} />
       </div>

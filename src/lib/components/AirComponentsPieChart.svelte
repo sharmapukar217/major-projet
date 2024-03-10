@@ -16,7 +16,7 @@
 
   const triggers = {
     [Donut.selectors.segment]: (d: any) => {
-      return `${d.data.id}: ${d.data.value}`;
+      return `${d.data.id}: ${Number(d.data.value).toFixed(3)}`;
     }
   };
 
@@ -25,15 +25,7 @@
   const value = (d: { id: string; value: string }) => d.value;
   onMount(() => (mounted = true));
 
-  const getFreshnessStatus = (aqi?: number) => {
-    if (!aqi) return;
-    if (aqi < 12) return "Clean";
-    else if (aqi >= 12 && aqi < 35.5) return "Good";
-    else if (aqi >= 35.5 && aqi < 55.5) return "Fair";
-    else if (aqi >= 55.5 && aqi < 150.5) return "Poor";
-    else if (aqi >= 150.5 && aqi < 250.5) return "Very Poor";
-    else return "Unclean";
-  };
+  
 </script>
 
 <div class="flex flex-col rounded-xl border bg-card text-card-foreground shadow p-6 overflow-clip">
@@ -52,8 +44,7 @@
         <VisDonut
           {value}
           arcWidth={40}
-          centralLabel={data?.aqi ? `${data?.aqi} μg/m³` : undefined}
-          centralSubLabel={getFreshnessStatus(data?.aqi)} />
+          centralLabel={data?.aqi ? `Overall: ${data?.aqi} μg/m³` : undefined}  />
       </VisSingleContainer>
     </div>
   {:else}
